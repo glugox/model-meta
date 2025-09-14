@@ -3,6 +3,12 @@
   "description": "Laravel package for defining model fields, validation, relations, etc.",
   "type": "library",
   "license": "MIT",
+  "authors": [
+    {
+      "name": "Ervin Beciragic",
+      "email": "ervinbeciragic@gmail.com"
+    }
+  ],
   "autoload": {
     "psr-4": {
       "Glugox\\ModelMeta\\": "src/",
@@ -11,8 +17,7 @@
     }
   },
   "require": {
-    "php": "^8.2",
-    "illuminate/support": "^11.0"
+    "php": "^8.2"
   },
   "require-dev": {
     "pestphp/pest": "^4.1"
