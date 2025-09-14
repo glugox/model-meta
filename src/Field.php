@@ -178,6 +178,15 @@ class Field
     }
 
     /**
+     * Fluent setter for searchable flag.
+     */
+    public function searchable(): static
+    {
+        $this->searchable = true;
+        return $this;
+    }
+
+    /**
      * Fluent setter for unique flag.
      */
     public function unique(?string $table = null, ?string $column = null): static
