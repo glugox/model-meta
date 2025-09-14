@@ -1,0 +1,32 @@
+{
+  "name": "glugox/model-meta",
+  "description": "Laravel package for defining model fields, validation, relations, etc.",
+  "type": "library",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Glugox\\ModelMeta\\": "src/",
+      "Tests\\": "tests/",
+      "Dummies\\": "tests/Dummies/"
+    }
+  },
+  "require": {
+    "php": "^8.2",
+    "illuminate/support": "^11.0"
+  },
+  "require-dev": {
+    "pestphp/pest": "^4.1"
+  },
+  "scripts": {
+    "test": [
+      "vendor/bin/pest"
+    ],
+    "test-coverage": "vendor/bin/pest --coverage",
+    "format": "vendor/bin/pint"
+  },
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  }
+}
