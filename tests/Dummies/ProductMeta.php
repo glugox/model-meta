@@ -23,7 +23,7 @@ class ProductMeta extends ModelMeta
     {
         return [
             ID::make()->sortable(),
-            Text::make('name')->required()->isName(),
+            Text::make('name')->required()->main(),
             Number::make('price')->step(0.01)->required(),
             Enum::make('status', ['draft', 'published'])->default('draft'),
             File::make('manual')->nullable(),

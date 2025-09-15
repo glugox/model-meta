@@ -15,7 +15,7 @@ class ModelMetaResolver
      * Default: App\\Meta\\{ModelName}Meta
      * e.g. App\Meta\UserMeta for App\Models\User
      */
-    protected static string $defaultNamespace = 'App\\Meta';
+    protected static string $defaultNamespace = 'App\\Meta\\Models';
     public static function setDefaultNamespace(string $namespace): void
     {
         static::$defaultNamespace = trim($namespace, '\\');

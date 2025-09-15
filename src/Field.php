@@ -2,11 +2,35 @@
 
 namespace Glugox\ModelMeta;
 
+use Illuminate\Support\Str;
+
 /**
  * Represents metadata for a single field in a model or resource.
  */
 class Field
 {
+    /**
+     * @param FieldType $type
+     * @param string $name
+     * @param string|null $label
+     * @param string[] $rules
+     * @param bool $nullable
+     * @param mixed|null $default
+     * @param bool $required
+     * @param bool $unique
+     * @param bool $sometimes
+     * @param string|null $comment
+     * @param bool $sortable
+     * @param bool $searchable
+     * @param bool $main
+     * @param bool $showInTable
+     * @param bool $showInForm
+     * @param int|float|null $min
+     * @param int|float|null $max
+     * @param bool $readonly
+     * @param bool $hidden
+     * @param float|null $step
+     */
     public function __construct(
         public FieldType $type,
         public string $name,
@@ -40,7 +64,7 @@ class Field
         public bool $searchable = false,
 
         /** Whether this field is considered the "name" of the entity */
-        public bool $isName = false,
+        public bool $main = false,
 
         /** Show this field in table index */
         public bool $showInTable = true,
@@ -61,11 +85,16 @@ class Field
         public bool $hidden = false,
 
         /** Precision for decimal/float fields */
-        public ?float $step = null
+        public ?float $step = null,
+
+        /** referenced database table */
+        public ?string $table = null,
     ) {}
 
     /**
      * Fluent setter for validation rules.
+     *
+     * @param string[] $rules Array of Laravel validation rules (e.g. ['required', 'string', 'max:255'])
      */
     public function rules(array $rules): self
     {
@@ -76,12 +105,12 @@ class Field
     /**
      * Fluent setter for required.
      */
-    public function required(?bool $required = true): self
+    public function required(?bool $required = null): self
     {
-        $this->required = $required;
+        $this->required = $required ?? true;
 
         // If required, automatically disable nullable
-        if ($required) {
+        if ($this->required) {
             $this->nullable = false;
             $this->rules = array_filter($this->rules, fn($r) => $r !== 'nullable');
 
@@ -99,12 +128,12 @@ class Field
     /**
      * Fluent setter for nullable.
      */
-    public function nullable(?bool $nullable = true): self
+    public function nullable(?bool $nullable = null): self
     {
-        $this->nullable = $nullable;
+        $this->nullable = $nullable ?? true;
 
         // If nullable, remove 'required' rule if present
-        if ($nullable) {
+        if ($this->nullable) {
             $this->required = false;
             $this->rules = array_filter($this->rules, fn($r) => $r !== 'required');
 
@@ -133,10 +162,20 @@ class Field
      * Indicates if this field is the "name" of the entity. For example, if BLog has title field, then title is the name.
      * This is used in various places, like in the admin panel, make links only on name fields, etc.
      */
-    public function isName(?bool $isName = true): self
+    public function main(?bool $main = null): self
     {
-        $this->isName = $isName;
+        $this->main = $main ?? true;
         return $this;
+    }
+
+    /**
+     * Return true if field is main.
+     */
+    public function isMain(): bool
+    {
+        // Check if the field name is 'name' or 'title', which are common conventions for name fields
+        return $this->main
+            || in_array($this->name, ['name', 'title'], true);
     }
 
     /**
@@ -234,6 +273,33 @@ class Field
     public function comment(string $comment): self
     {
         $this->comment = $comment;
+        return $this;
+    }
+
+    /**
+     * Fluent setter for showInTable flag.
+     */
+    public function showInTable(bool $showInTable = true): self
+    {
+        $this->showInTable = $showInTable;
+        return $this;
+    }
+
+    /**
+     * Fluent setter for showInForm flag.
+     */
+    public function showInForm(bool $showInForm = true): self
+    {
+        $this->showInForm = $showInForm;
+        return $this;
+    }
+
+    /**
+     * Database table if the field is a foreign key.
+     */
+    public function table(?string $table): self
+    {
+        $this->table = $table;
         return $this;
     }
 }

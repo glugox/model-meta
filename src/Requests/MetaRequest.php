@@ -2,12 +2,13 @@
 
 namespace Glugox\ModelMeta\Requests;
 
-use Illuminate\Http\Request;
+use Glugox\ModelMeta\ModelMeta;
+use Illuminate\Foundation\Http\FormRequest;
 use Glugox\ModelMeta\ModelMetaResolver;
 use Illuminate\Support\Str;
 use RuntimeException;
 
-class MetaRequest extends Request
+class MetaRequest extends FormRequest
 {
 
     /**
@@ -28,14 +29,54 @@ class MetaRequest extends Request
     protected ?string $metaClass = null;
 
     /**
-     * Get resource name from route (e.g. "addresses" from "addresses.index").
-     * @return string The resource name (e.g. "addresses")
+     * Rules for Laravel FormRequest validation.
+     *
+     * @return array<string, string[]> The validation rules.
+     */
+    public function rules(): array
+    {
+        $method = $this->method();
+
+        if ($method === 'POST') {
+            return $this->meta()->rules()['store'];
+        }
+
+        if ($method === 'PUT' || $method === 'PATCH') {
+            return $this->meta()->rules()['update'];
+        }
+
+        // fallback
+        return [];
+    }
+
+
+    /**
+     * Get resource name from route or URI.
+     * e.g. "addresses" from "addresses.index" or "/api/addresses"
+     *
+     * @return string The resource name (plural, snake-case)
      */
     public function resourceName(): string
     {
         if (! $this->resourceName) {
-            $routeName = $this->route()->getName(); // "addresses.index"
-            $this->resourceName = explode('.', $routeName)[0]; // "addresses"
+            $routeName = $this->route()?->getName();
+
+            if (! $routeName) {
+                throw new RuntimeException("Cannot resolve resource name: route has no name.");
+            }
+
+            $segments = explode('.', $routeName);
+
+            // Remove common prefixes like 'api', 'admin', etc.
+            $prefixesToSkip = ['api', 'admin', 'v1', 'v2'];
+            $segments = array_filter($segments, fn($s) => ! in_array($s, $prefixesToSkip));
+
+            // Take the first remaining segment as resource name
+            $this->resourceName = array_shift($segments);
+
+            if (! $this->resourceName) {
+                throw new RuntimeException("Cannot resolve resource name from route: {$routeName}");
+            }
         }
 
         return $this->resourceName;
@@ -74,7 +115,7 @@ class MetaRequest extends Request
     /**
      * Instantiate the Meta object.
      */
-    public function meta(): object
+    public function meta(): ModelMeta
     {
         return ModelMetaResolver::make($this->modelClass());
     }

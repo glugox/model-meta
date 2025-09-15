@@ -8,7 +8,7 @@ it('generates UserMeta class from JSON config', function () {
         'icon' => 'Users',
         'fields' => [
             ['name' => 'id', 'type' => 'id', 'nullable' => false],
-            ['name' => 'name', 'type' => 'string', 'required' => true, 'sortable' => true, 'searchable' => true],
+            ['name' => 'name', 'type' => 'string', 'sortable' => true, 'searchable' => true],
             ['name' => 'email', 'type' => 'email', 'unique' => true, 'sortable' => true, 'searchable' => true],
             ['name' => 'password', 'type' => 'password', 'nullable' => false, 'hidden' => true],
             ['name' => 'started_at', 'type' => 'date', 'nullable' => true],
