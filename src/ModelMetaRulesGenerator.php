@@ -24,6 +24,16 @@ class ModelMetaRulesGenerator
         return [
             'store'  => $this->rulesForAllFields('store'),
             'update' => $this->rulesForAllFields('update'),
+            'update-selection' => [
+                'added'   => 'array',
+                'added.*' => 'integer|exists:' . $this->meta->tableName() . ',id',
+                'removed'   => 'array',
+                'removed.*' => 'integer|exists:' . $this->meta->tableName() . ',id',
+            ],
+            'bulk-destroy' => [
+                'ids'   => 'required|array',
+                'ids.*' => 'integer|exists:' . $this->meta->tableName() . ',id',
+            ],
         ];
     }
 

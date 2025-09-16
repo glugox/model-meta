@@ -35,17 +35,30 @@ class MetaRequest extends FormRequest
      */
     public function rules(): array
     {
+        $routeName = $this->route()?->getName() ?? '';
+        $segments = explode('.', $routeName);
+        if (count($segments) === 1) {
+            $segments = explode('-', $routeName);
+        }
+
+        $action = end($segments);
+
+        // First, see if the Meta class defines custom rules for this action
+        /** @var array{store: array<string, string[]>, update: array<string, string[]>} $metaRules */
+        $metaRules = $this->meta()->rules();
+        if (isset($metaRules[$action])) {
+            return $metaRules[$action];
+        }
+
+        // Default CRUD fallback
         $method = $this->method();
-
         if ($method === 'POST') {
-            return $this->meta()->rules()['store'];
+            return $metaRules['store'];
         }
-
         if ($method === 'PUT' || $method === 'PATCH') {
-            return $this->meta()->rules()['update'];
+            return $metaRules['update'];
         }
 
-        // fallback
         return [];
     }
 
@@ -65,22 +78,46 @@ class MetaRequest extends FormRequest
                 throw new RuntimeException("Cannot resolve resource name: route has no name.");
             }
 
+            // Step 1: split only on dots
             $segments = explode('.', $routeName);
 
-            // Remove common prefixes like 'api', 'admin', etc.
+            // Step 2: if no dots (custom dash-style route), split once on dashes
+            if (count($segments) === 1) {
+                $segments = explode('-', $routeName);
+            }
+
+            // Remove common prefixes
             $prefixesToSkip = ['api', 'admin', 'v1', 'v2'];
-            $segments = array_filter($segments, fn($s) => ! in_array($s, $prefixesToSkip));
+            $segments = array_values(array_filter(
+                $segments,
+                fn ($s) => ! in_array($s, $prefixesToSkip, true)
+            ));
 
-            // Take the first remaining segment as resource name
-            $this->resourceName = array_shift($segments);
-
-            if (! $this->resourceName) {
+            if (empty($segments)) {
                 throw new RuntimeException("Cannot resolve resource name from route: {$routeName}");
             }
+
+            // Known action keywords (extendable)
+            $actionKeywords = [
+                'index', 'show', 'create', 'store',
+                'edit', 'update', 'destroy',
+                'bulk', 'bulk-destroy', 'update-selection'
+            ];
+
+            // Step 3: Drop trailing action words
+            while (! empty($segments) && in_array(end($segments), $actionKeywords, true)) {
+                array_pop($segments);
+            }
+
+            $this->resourceName = end($segments) ?: throw new RuntimeException(
+                "Cannot resolve resource name from route: {$routeName}"
+            );
         }
 
         return $this->resourceName;
     }
+
+
 
     /**
      * Resolve the Eloquent model class for this request.

@@ -23,7 +23,6 @@ class ModelMetaResolver
 
     /**
      * @param object|string $model Eloquent model instance or fully qualified model class name
-     * @return class-string<ModelMeta>
      */
     public static function resolve(object|string $model): string
     {
@@ -40,11 +39,15 @@ class ModelMetaResolver
 
     /**
      * Create an instance of the ModelMeta for a given model.
+     *
+     * @param object|string $model
+     * @return ModelMeta
      */
     public static function make(object|string $model): ModelMeta
     {
         $metaClass = static::resolve($model);
 
+        // @phpstan-ignore-next-line
         return function_exists('app') ? app($metaClass) : new $metaClass();
     }
 }

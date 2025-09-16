@@ -10,6 +10,11 @@ abstract class ModelMeta
     abstract public function fields(): array;
 
     /**
+     * Returns database table name for the model.
+     */
+    abstract public function tableName(): string;
+
+    /**
      * Table fields as Field objects
      *
      * @return Field[]
