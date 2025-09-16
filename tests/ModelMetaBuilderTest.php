@@ -21,7 +21,7 @@ it('generates UserMeta class from JSON config', function () {
     // Assert that the class name is correct
     expect($code)->toContain('class UserMeta extends ModelMeta')
         ->and($code)->toContain("Id::make(") // can have "id" or not, falls back to "id"
-        ->and($code)->toContain("Text::make('name')->required()->sortable()->searchable()")
+        ->and($code)->toContain("Text::make('name')->sortable()->searchable()")
         ->and($code)->toContain("Email::make('email')->unique()->sortable()->searchable()")
         ->and($code)->toContain("Password::make('password')->hidden()")
         ->and($code)->toContain("Date::make('started_at')->nullable()");

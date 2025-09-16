@@ -32,4 +32,9 @@ class UserMeta extends ModelMeta
             Image::make('avatar')->nullable(),
         ];
     }
+
+    public function tableName(): string
+    {
+        return 'users';
+    }
 }

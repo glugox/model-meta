@@ -30,4 +30,9 @@ class ProductMeta extends ModelMeta
             Number::make('weight')->default(0.0),
         ];
     }
+
+    public function tableName(): string
+    {
+        return 'products';
+    }
 }
