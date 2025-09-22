@@ -29,6 +29,18 @@ class MetaRequest extends FormRequest
     protected ?string $metaClass = null;
 
     /**
+     * Determine if the request expects a JSON response.
+     * Checks for 'jsonMode' boolean parameter to force JSON response.
+     */
+    public function expectsJson(): bool
+    {
+        if ($this->boolean('jsonMode')) {
+            return true;
+        }
+        return $this->ajax() || $this->wantsJson();
+    }
+
+    /**
      * Rules for Laravel FormRequest validation.
      *
      * @return array<string, string[]> The validation rules.
@@ -155,5 +167,20 @@ class MetaRequest extends FormRequest
     public function meta(): ModelMeta
     {
         return ModelMetaResolver::make($this->modelClass());
+    }
+
+    /**
+     * Get the Inertia component to be used for the "create" and "edit" views.
+     * It checks for a '_parentComponent' parameter in the request to allow dynamic component assignment.
+     * If not present, it defaults to '/'.
+     *
+     * @return string|null The Inertia component name or path.
+     */
+    public function getStoreInertiaComponent(): ?string
+    {
+        if($this->filled('_parentComponent')){
+            return $this->string('_parentComponent');
+        }
+        return null;
     }
 }
