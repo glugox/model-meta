@@ -31,8 +31,15 @@ class ProductMeta extends ModelMeta
         ];
     }
 
+
+
     public function tableName(): string
     {
         return 'products';
+    }
+
+    public function relations(): array
+    {
+        return [];
     }
 }

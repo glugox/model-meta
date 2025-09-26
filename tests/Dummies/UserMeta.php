@@ -37,4 +37,9 @@ class UserMeta extends ModelMeta
     {
         return 'users';
     }
+
+    public function relations(): array
+    {
+        return [];
+    }
 }

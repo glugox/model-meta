@@ -10,6 +10,11 @@ abstract class ModelMeta
     abstract public function fields(): array;
 
     /**
+     * @return Relation[]
+     */
+    abstract public function relations(): array;
+
+    /**
      * Returns database table name for the model.
      */
     abstract public function tableName(): string;
@@ -56,6 +61,16 @@ abstract class ModelMeta
     {
         // Filter fields that have showInForm = true
         return array_map(fn(Field $field) => $field->name, $this->formFieldObjects());
+    }
+
+    /**
+     * Relations as Relation objects
+     *
+     * @return string[]
+     */
+    public function relationsNames(): array
+    {
+        return array_map(fn(Relation $relation) => $relation->name, $this->relations());
     }
 
     /**

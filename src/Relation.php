@@ -7,30 +7,34 @@ abstract class Relation
     public function __construct(
         public string $name,
         public RelationType $type,
-        private readonly ?string $relatedEntityName = null,
+        private ?string $relatedEntityName = null,
         private ?string $relatedKey = null,
         protected ?string $foreignKey = null,
         protected ?string $localKey = null,
         protected ?string $relationName = null,
-        protected ?string $morphName = null
+        protected ?string $morphName = null,
+        /** @var string[] */
+        protected ?string $eagerFields = null
     ) {}
-
-    abstract public function isToOne(): bool;
-    abstract public function isToMany(): bool;
 
     public function getRelatedEntityName(): ?string
     {
         return $this->relatedEntityName;
+    }
+    public function relatedEntityName(?string $relatedEntityName): self
+    {
+        $this->relatedEntityName = $relatedEntityName;
+        return $this;
     }
 
     public function getForeignKey(): ?string
     {
         return $this->foreignKey;
     }
-
-    public function getLocalKey(): ?string
+    public function foreignKey(?string $foreignKey): self
     {
-        return $this->localKey;
+        $this->foreignKey = $foreignKey;
+        return $this;
     }
 
     public function getRelationName(): string
@@ -42,10 +46,40 @@ abstract class Relation
     {
         return $this->relatedKey;
     }
+    public function relatedKey(?string $relatedKey): self
+    {
+        $this->relatedKey = $relatedKey;
+        return $this;
+    }
 
     public function getMorphName(): ?string
     {
         return $this->morphName;
+    }
+    public function morphName(?string $morphName): self
+    {
+        $this->morphName = $morphName;
+        return $this;
+    }
+
+    /**
+     * Eager fields to load on the related model.
+     *
+     * @return string|null
+     */
+    public function getEagerFields(): ?string
+    {
+        return $this->eagerFields;
+    }
+
+    /**
+     * @param string|null $eagerFields
+     * @return $this
+     */
+    public function eagerFields(?string $eagerFields): self
+    {
+        $this->eagerFields = $eagerFields;
+        return $this;
     }
 
     public function isPolymorphic(): bool
