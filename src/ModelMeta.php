@@ -15,6 +15,11 @@ abstract class ModelMeta
     abstract public function relations(): array;
 
     /**
+     * @return Filter[]
+     */
+    abstract public function filters(): array;
+
+    /**
      * Returns database table name for the model.
      */
     abstract public function tableName(): string;
@@ -121,6 +126,17 @@ abstract class ModelMeta
     public function rules(): array
     {
         return new ModelMetaRulesGenerator($this)->generate();
+    }
+
+    /**
+     * Get filters for field
+     *
+     * @param  string  $fieldName
+     * @return Filter[]
+     */
+    public function filtersForField(string $fieldName): array
+    {
+        return array_filter($this->filters(), fn(Filter $filter) => $filter->name === $fieldName);
     }
 
 }
