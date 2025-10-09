@@ -36,28 +36,28 @@ class TimestampFilter extends BaseFilter implements Filter
      * @param \DateTime|array{
      *     from?: string,
      *     to?: string
-     * } $value
+     * } $values
      * @return Builder<Model>
      */
-    public function apply(Builder $query, mixed $value): Builder
+    public function apply(Builder $query, mixed $values): Builder
     {
-        if (is_array($value)) {
+        if (is_array($values)) {
             /** @var string $from */
-            $from = $value['from'] ?? null;
+            $from = $values['from'] ?? null;
             /** @var string $to */
-            $to = $value['to'] ?? null;
+            $to = $values['to'] ?? null;
             if ($from && $to && $from > $to) {
                 return $query->whereBetween($this->column, [
                     Carbon::parse($from)->startOfDay(),
                     Carbon::parse($to)->endOfDay()
                 ]);
-            } elseif (isset($value['from'])) {
+            } elseif (isset($values['from'])) {
                 return $query->where($this->column, '>=', Carbon::parse($from)->startOfDay());
-            } elseif (isset($value['to'])) {
+            } elseif (isset($values['to'])) {
                 return $query->where($this->column, '<=', Carbon::parse($to)->endOfDay());
             }
         } else {
-            return $query->whereDate($this->column, '=', Carbon::parse($value)->toDateString());
+            return $query->whereDate($this->column, '=', Carbon::parse($values)->toDateString());
         }
         return $query;
     }

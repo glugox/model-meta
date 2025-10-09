@@ -30,11 +30,15 @@ class BooleanFilter extends BaseFilter implements Filter {
      * Apply the filter to the given query.
      *
      * @param Builder<Model> $query
-     * @param string $value
+     * @param array{
+     *     active: bool|null
+     * } $values
      * @return Builder<Model>
      */
-    public function apply(Builder $query, mixed $value): Builder
+    public function apply(Builder $query, mixed $values): Builder
     {
+        $active = filter_var($values, FILTER_VALIDATE_BOOLEAN);
+        $query->where($this->column, $active);
         return $query;
     }
 

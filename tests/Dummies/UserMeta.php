@@ -2,7 +2,10 @@
 
 namespace Dummies;
 
+use Glugox\ModelMeta\Contracts\Filter;
 use Glugox\ModelMeta\Field;
+use Glugox\ModelMeta\Filters\BooleanFilter;
+use Glugox\ModelMeta\Filters\TextFilter;
 use Glugox\ModelMeta\ModelMeta;
 use Glugox\ModelMeta\Fields\{
     Id,
@@ -41,5 +44,19 @@ class UserMeta extends ModelMeta
     public function relations(): array
     {
         return [];
+    }
+
+    /**
+     * Define filters for the UserMeta resource.
+     *
+     * @return array<int, Filter>
+     */
+    public function filters(): array
+    {
+        return [
+            TextFilter::make('name'),
+            TextFilter::make('email'),
+            BooleanFilter::make('active'),
+        ];
     }
 }

@@ -31,17 +31,12 @@ class EnumFilter extends BaseFilter implements Filter
      * Apply the filter to the given query.
      *
      * @param Builder<Model> $query
-     * @param mixed $value
+     * @param mixed $values
      * @return Builder<Model>
      */
-    public function apply(Builder $query, mixed $value): Builder
+    public function apply(Builder $query, mixed $values): Builder
     {
-
-        if(! is_array($value)) {
-            throw new \InvalidArgumentException('Enum filter value must be an array.');
-        }
-
-        $selected = $value['selected'] ?? null;
+        $selected = (string) $values;
         if(! $selected) {
             return $query;
         }

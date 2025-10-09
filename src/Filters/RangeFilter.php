@@ -35,16 +35,16 @@ class RangeFilter extends BaseFilter implements Filter
      * @param \DateTime|array{
      *     min?: string,
      *     max?: string
-     * } $value
+     * } $values
      * @return Builder<Model>
      */
-    public function apply(Builder $query, mixed $value): Builder
+    public function apply(Builder $query, mixed $values): Builder
     {
-        if (is_array($value)) {
+        if (is_array($values)) {
             /** @var string $min */
-            $min = $value['min'] ?? null;
+            $min = $values['min'] ?? null;
             /** @var string $max */
-            $max = $value['max'] ?? null;
+            $max = $values['max'] ?? null;
             if ($min && $max && $min < $max) {
                 return $query->whereBetween($this->column, [$min, $max]);
             } elseif ($min) {
@@ -53,7 +53,7 @@ class RangeFilter extends BaseFilter implements Filter
                 return $query->where($this->column, '<=',$max);
             }
         } else {
-            return $query->where($this->column, '=', $value);
+            return $query->where($this->column, '=', $values);
         }
         return $query;
     }

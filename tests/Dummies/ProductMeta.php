@@ -2,7 +2,12 @@
 
 namespace Dummies;
 
+use Glugox\ModelMeta\Contracts\Filter;
 use Glugox\ModelMeta\Field;
+use Glugox\ModelMeta\Filters\DateFilter;
+use Glugox\ModelMeta\Filters\EnumFilter;
+use Glugox\ModelMeta\Filters\RangeFilter;
+use Glugox\ModelMeta\Filters\TextFilter;
 use Glugox\ModelMeta\ModelMeta;
 use Glugox\ModelMeta\Fields\{
     ID,
@@ -41,5 +46,20 @@ class ProductMeta extends ModelMeta
     public function relations(): array
     {
         return [];
+    }
+
+    /**
+     * Define filters for the ProductMeta resource.
+     *
+     * @return array<int, Filter>
+     */
+    public function filters(): array
+    {
+        return [
+            TextFilter::make('name'),
+            EnumFilter::make('status'),
+            RangeFilter::make('price'),
+            DateFilter::make('available_from'),
+        ];
     }
 }

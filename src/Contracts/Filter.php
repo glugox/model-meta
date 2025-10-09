@@ -12,10 +12,10 @@ interface Filter {
      * Apply the filter to the query.
      *
      * @param Builder<Model> $query
-     * @param mixed $value
+     * @param mixed $values
      * @return Builder<Model>
      */
-    public function apply(Builder $query, mixed $value): Builder;
+    public function apply(Builder $query, mixed $values): Builder;
 
     /**
      * Return the unique key for this filter.

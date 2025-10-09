@@ -30,10 +30,10 @@ class NumberFilter extends BaseFilter implements Filter {
      * Apply the filter to the given query.
      *
      * @param Builder<Model> $query
-     * @param string $value
+     * @param string $values
      * @return Builder<Model>
      */
-    public function apply(Builder $query, mixed $value): Builder
+    public function apply(Builder $query, mixed $values): Builder
     {
         return $query;
     }
