@@ -25,7 +25,7 @@ interface Filter {
     /**
      * Human-readable label for UI.
      */
-    //public function label(): string;
+    public function label(string $val): static;
 
     /**
      * Optional: return available options (for select filters).

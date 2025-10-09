@@ -2,20 +2,22 @@
 
 namespace Glugox\ModelMeta\Filters;
 
-use Glugox\ModelMeta\FilterType;
+
 use Glugox\ModelMeta\Contracts\Filter;
+use Glugox\ModelMeta\FilterType;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
-class TextFilter extends BaseFilter implements Filter {
 
+class HasManyFilter extends BaseFilter implements Filter
+{
     /**
      * Create a new filter instance.
      */
     public function __construct(
         protected string $column
     ) {
-        parent::__construct($column, FilterType::STRING);
+        parent::__construct($column, FilterType::HAS_MANY);
     }
 
     /**
@@ -30,17 +32,23 @@ class TextFilter extends BaseFilter implements Filter {
      * Apply the filter to the given query.
      *
      * @param Builder<Model> $query
-     * @param string $values
+     * @param \DateTime|array{
+     *     min?: string,
+     *     max?: string
+     * } $values
      * @return Builder<Model>
      */
     public function apply(Builder $query, mixed $values): Builder
     {
-        $query->where($this->column, 'like', '%'.$values.'%');
+        // TODO: Implement the logic to apply the belongsToMany filter based on the provided values.
         return $query;
     }
 
+    /**
+     * Get the key for the filter.
+     */
     public function key(): string
     {
-        return 'text_'.$this->column;
+        return 'has_many_'.$this->column;
     }
 }

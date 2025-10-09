@@ -63,6 +63,6 @@ class RangeFilter extends BaseFilter implements Filter
      */
     public function key(): string
     {
-        return 'timestamp_'.$this->column;
+        return 'range_'.$this->column;
     }
 }
