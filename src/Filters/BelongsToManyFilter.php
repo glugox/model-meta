@@ -40,9 +40,19 @@ class BelongsToManyFilter extends BaseFilter implements Filter
      */
     public function apply(Builder $query, mixed $values): Builder
     {
-        // TODO: Implement the logic to apply the belongsToMany filter based on the provided values.
-        return $query;
+        if (empty($values)) {
+            return $query;
+        }
+
+        // Normalize values to array of IDs
+        $ids = is_array($values) ? $values : [$values];
+
+        // Use whereHas on the relation (the relation name should match the column)
+        return $query->whereHas($this->column, function (Builder $q) use ($ids) {
+            $q->whereIn("{$q->getModel()->getTable()}.id", $ids);
+        });
     }
+
 
     /**
      * Get the key for the filter.
