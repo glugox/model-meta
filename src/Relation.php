@@ -14,8 +14,18 @@ abstract class Relation
         protected ?string $relationName = null,
         protected ?string $morphName = null,
         /** @var string[] */
-        protected ?string $eagerFields = null
+        protected ?string $eagerFields = null,
+        public bool $showInTable = false,
     ) {}
+
+    /**
+     * Fluent setter for showInTable flag.
+     */
+    public function showInTable(bool $showInTable = true): self
+    {
+        $this->showInTable = $showInTable;
+        return $this;
+    }
 
     public function getRelatedEntityName(): ?string
     {
