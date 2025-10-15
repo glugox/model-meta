@@ -19,11 +19,11 @@ class ModelMetaRulesGenerator
      *
      * @return array{store: array<string, string[]>, update: array<string, string[]>}
      */
-    public function generate(): array
+    public function generate(?string $recordId = null): array
     {
         return [
-            'store'  => $this->rulesForAllFields('store'),
-            'update' => $this->rulesForAllFields('update'),
+            'store'  => $this->rulesForAllFields('store', $recordId),
+            'update' => $this->rulesForAllFields('update', $recordId),
             'update-selection' => [
                 'added'   => 'array',
                 'added.*' => 'integer|exists:' . $this->meta->tableName() . ',id',
@@ -43,12 +43,12 @@ class ModelMetaRulesGenerator
      * @param string $action 'store' or 'update'
      * @return array<string, string[]> Array of field names to their validation rules.
      */
-    protected function rulesForAllFields(string $action): array
+    protected function rulesForAllFields(string $action, ?string $recordId = null): array
     {
         $rules = [];
 
         foreach ($this->meta->fields() as $field) {
-            $rules[$field->name] = $this->rulesForField($field, $action);
+            $rules[$field->name] = $this->rulesForField($field, $action, $recordId);
             $nestedRules = $this->rulesForNestedField($field, $action);
             $rules = array_merge($rules, $nestedRules);
         }
@@ -91,7 +91,7 @@ class ModelMetaRulesGenerator
      * @param string $action 'store' or 'update' to determine context.
      * @return array<string> Array of validation rules.
      */
-    protected function rulesForField(Field $field, string $action): array
+    protected function rulesForField(Field $field, string $action, ?string $recordId = null): array
     {
         $rules = [];
 
@@ -142,8 +142,19 @@ class ModelMetaRulesGenerator
                 break;
         }
 
+        // Unique constraint
         if ($field->unique) {
-            $rules[] = 'unique:' . ($field->table ?? Str::snake(class_basename($this->meta))) . ',' . $field->name;
+
+            $recordId = $recordId ?? ':id'; // Placeholder for current record ID in update context
+            $table = $field->table ?? $this->meta->tableName();
+            $column = $field->name;
+
+            if ($action === 'update') {
+                // Assume the current record ID is passed in a standard 'id' field
+                $rules[] = "unique:{$table},{$column},{$recordId},id";
+            } else {
+                $rules[] = "unique:{$table},{$column}";
+            }
         }
 
         // Name field must be required

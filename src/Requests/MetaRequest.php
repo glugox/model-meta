@@ -57,7 +57,9 @@ class MetaRequest extends FormRequest
 
         // First, see if the Meta class defines custom rules for this action
         /** @var array{store: array<string, string[]>, update: array<string, string[]>} $metaRules */
-        $metaRules = $this->meta()->rules();
+        $recordId = $this->route()?->parameter('id') ?? $this->input('id');
+        $metaRules = $this->meta()->rules($recordId);
+
         if (isset($metaRules[$action])) {
             return $metaRules[$action];
         }

@@ -123,9 +123,9 @@ abstract class ModelMeta
      *
      * @return array{store: array<string, string[]>, update: array<string, string[]>} The validation rules.
      */
-    public function rules(): array
+    public function rules(?string $recordId = null): array
     {
-        return new ModelMetaRulesGenerator($this)->generate();
+        return new ModelMetaRulesGenerator($this)->generate($recordId);
     }
 
     /**
