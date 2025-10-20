@@ -114,7 +114,7 @@ class MetaRequest extends FormRequest
             // Known action keywords (extendable)
             $actionKeywords = [
                 'index', 'show', 'create', 'store',
-                'edit', 'update', 'destroy',
+                'edit', 'update', 'destroy', 'action',
                 'bulk', 'bulk-destroy', 'update-selection'
             ];
 
